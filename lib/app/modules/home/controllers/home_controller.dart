@@ -1,9 +1,18 @@
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  //TODO: Implement HomeController
+  final selectedCategory = 0.obs;
 
-  final count = 0.obs;
+  final List<Map<String, String>> categories = [
+    {'name': 'Carpet', 'image': 'images/carpet.png'},
+    {'name': 'Toilet', 'image': 'images/toilet.png'},
+    {'name': 'Floor', 'image': 'images/floor.png'},
+    {'name': 'Window', 'image': 'images/window.png'},
+    {'name': 'Garden', 'image': 'images/garden.png'},
+    {'name': 'Office', 'image': 'images/office.png'},
+    {'name': 'Clothes', 'image': 'images/clothes.png'},
+  ];
+
   @override
   void onInit() {
     super.onInit();
@@ -19,5 +28,7 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
-  void increment() => count.value++;
+  void selectCategory(int index) {
+    selectedCategory.value = index;
+  }
 }
