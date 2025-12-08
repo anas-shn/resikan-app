@@ -234,10 +234,7 @@ class HistoryView extends GetView<HistoryController> {
                   Icon(Icons.calendar_today, size: 18, color: Colors.grey[600]),
                   SizedBox(width: 8),
                   Text(
-                    DateFormat(
-                      'EEEE, dd MMM yyyy',
-                      'id_ID',
-                    ).format(booking.scheduledAt),
+                    DateFormat('dd MMM yyyy').format(booking.scheduledAt),
                     style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],
@@ -292,7 +289,6 @@ class HistoryView extends GetView<HistoryController> {
                       SizedBox(height: 4),
                       Text(
                         NumberFormat.currency(
-                          locale: 'id_ID',
                           symbol: 'Rp ',
                           decimalDigits: 0,
                         ).format(booking.totalPrice),
@@ -409,10 +405,7 @@ class HistoryView extends GetView<HistoryController> {
                 _buildDetailRow('Layanan', booking.extras!['service_name']),
               _buildDetailRow(
                 'Tanggal',
-                DateFormat(
-                  'EEEE, dd MMMM yyyy',
-                  'id_ID',
-                ).format(booking.scheduledAt),
+                DateFormat('dd MMM yyyy').format(booking.scheduledAt),
               ),
               _buildDetailRow(
                 'Waktu',
@@ -428,7 +421,6 @@ class HistoryView extends GetView<HistoryController> {
               _buildDetailRow(
                 'Total Biaya',
                 NumberFormat.currency(
-                  locale: 'id_ID',
                   symbol: 'Rp ',
                   decimalDigits: 0,
                 ).format(booking.totalPrice),

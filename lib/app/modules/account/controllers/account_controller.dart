@@ -29,10 +29,8 @@ class AccountController extends GetxController {
 
   @override
   void onClose() {
-    fullNameController.dispose();
-    phoneController.dispose();
-    emailController.dispose();
-    addressController.dispose();
+    // Note: Don't dispose TextEditingControllers here
+    // GetX manages the controller lifecycle
     super.onClose();
   }
 

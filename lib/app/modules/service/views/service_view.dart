@@ -8,8 +8,9 @@ class ServiceView extends GetView<ServiceController> {
 
   @override
   Widget build(BuildContext context) {
-    // Get category from arguments if passed
-    final String? category = Get.arguments as String?;
+    // Get category from arguments if passed (only if it's a String)
+    final args = Get.arguments;
+    final String? category = (args is String) ? args : null;
 
     // Filter by category if provided
     if (category != null && controller.selectedCategory.value != category) {
@@ -117,7 +118,6 @@ class ServiceView extends GetView<ServiceController> {
                                 children: [
                                   Text(
                                     NumberFormat.currency(
-                                      locale: 'id_ID',
                                       symbol: 'Rp ',
                                       decimalDigits: 0,
                                     ).format(service.basePrice),
