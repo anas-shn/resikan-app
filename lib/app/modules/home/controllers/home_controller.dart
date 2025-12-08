@@ -1,34 +1,47 @@
 import 'package:get/get.dart';
+import 'package:resikan_app/app/data/models/service_model.dart';
+import 'package:resikan_app/app/routes/app_pages.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeController extends GetxController {
-  final selectedCategory = 0.obs;
+  final supabase = Supabase.instance.client;
 
-  final List<Map<String, String>> categories = [
-    {'name': 'Carpet', 'image': 'images/carpet.png'},
-    {'name': 'Toilet', 'image': 'images/toilet.png'},
-    {'name': 'Floor', 'image': 'images/floor.png'},
-    {'name': 'Window', 'image': 'images/window.png'},
-    {'name': 'Garden', 'image': 'images/garden.png'},
-    {'name': 'Office', 'image': 'images/office.png'},
-    {'name': 'Clothes', 'image': 'images/clothes.png'},
-  ];
+  final services = <ServiceModel>[].obs;
+  final isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
+    loadServices();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  // Load services from database
+  Future<void> loadServices() async {
+    try {
+      isLoading.value = true;
+
+      final response = await supabase
+          .from('services')
+          .select()
+          .eq('active', true)
+          .order('created_at', ascending: false);
+
+      services.value = (response as List)
+          .map((json) => ServiceModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal memuat layanan: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void selectCategory(int index) {
-    selectedCategory.value = index;
+  // Navigate directly to service detail
+  void goToServiceDetail(ServiceModel service) {
+    Get.toNamed(Routes.SERVICE_DETAIL, arguments: service);
   }
 }

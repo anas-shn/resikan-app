@@ -1,3 +1,4 @@
+import 'package:resikan_app/app/config/theme_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
@@ -36,7 +37,7 @@ class HomeView extends GetView<HomeController> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            color: ThemeConfig.primary,
                           ),
                         ),
                       ],
@@ -72,78 +73,92 @@ class HomeView extends GetView<HomeController> {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: ThemeConfig.primary,
                   ),
                 ),
                 const SizedBox(height: 16),
 
-                // Services Grid
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 0.75,
-                  ),
-                  itemCount: controller.categories.length,
-                  itemBuilder: (context, index) {
-                    final category = controller.categories[index];
-                    return GestureDetector(
-                      onTap: () => controller.selectCategory(index),
-                      child: Obx(() {
-                        final isSelected =
-                            controller.selectedCategory.value == index;
-                        return Container(
-                          // decoration: BoxDecoration(
-                          //   color: Colors.white,
-                          //   borderRadius: BorderRadius.circular(16),
-                          //   border: Border.all(
-                          //     color: Colors.grey.shade300,
-                          //     width: isSelected ? 2 : 1,
-                          //   ),
-                          //   boxShadow: [
-                          //     BoxShadow(
-                          //       color: Colors.black.withOpacity(0.05),
-                          //       blurRadius: 8,
-                          //       offset: const Offset(0, 2),
-                          //     ),
-                          //   ],
-                          // ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 84,
-                                height: 84,
-                                // decoration: BoxDecoration(
-                                //   color: Colors.grey[100],
-                                //   borderRadius: BorderRadius.circular(12),
-                                // ),
-                                padding: const EdgeInsets.all(10),
-                                child: Image.asset(
-                                  category['image']!,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                category['name']!,
-                                style: TextStyle(
-                                  fontSize: 12,
-
-                                  color: Colors.black87,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
+                // Services Grid - from database
+                Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(40),
+                        child: CircularProgressIndicator(),
+                      ),
                     );
-                  },
-                ),
+                  }
+
+                  if (controller.services.isEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(40),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.cleaning_services_outlined,
+                              size: 60,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'Tidak ada layanan',
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 0.75,
+                        ),
+                    itemCount: controller.services.length,
+                    itemBuilder: (context, index) {
+                      final service = controller.services[index];
+                      return GestureDetector(
+                        onTap: () => controller.goToServiceDetail(service),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 64,
+                              height: 64,
+                              decoration: BoxDecoration(
+                                color: ThemeConfig.primary.withAlpha(25),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Icon(
+                                service.flutterIcon,
+                                size: 32,
+                                color: ThemeConfig.primary,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              service.name,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: ThemeConfig.textPrimary,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }),
                 const SizedBox(height: 20),
               ],
             ),
