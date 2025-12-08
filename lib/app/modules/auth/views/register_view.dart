@@ -1,3 +1,4 @@
+import 'package:resikan_app/app/config/theme_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
@@ -20,26 +21,13 @@ class RegisterView extends GetView<AuthController> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Logo
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Icon(
-                      Icons.cleaning_services,
-                      size: 50,
-                      color: Colors.white,
-                    ),
-                  ),
                   const SizedBox(height: 32),
                   const Text(
                     'Join Resikan',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: ThemeConfig.primary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -73,7 +61,7 @@ class RegisterView extends GetView<AuthController> {
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Colors.black,
+                          color: ThemeConfig.primary,
                           width: 2,
                         ),
                       ),
@@ -117,7 +105,7 @@ class RegisterView extends GetView<AuthController> {
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Colors.black,
+                          color: ThemeConfig.primary,
                           width: 2,
                         ),
                       ),
@@ -171,7 +159,7 @@ class RegisterView extends GetView<AuthController> {
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
-                            color: Colors.black,
+                            color: ThemeConfig.primary,
                             width: 2,
                           ),
                         ),
@@ -201,7 +189,7 @@ class RegisterView extends GetView<AuthController> {
                           ? null
                           : controller.signUp,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: ThemeConfig.primary,
                         foregroundColor: Colors.white,
                         disabledBackgroundColor: Colors.grey[400],
                         padding: const EdgeInsets.symmetric(vertical: 18),
@@ -259,12 +247,15 @@ class RegisterView extends GetView<AuthController> {
                         'https://www.google.com/favicon.ico',
                         height: 20,
                         errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.g_mobiledata, color: Colors.black),
+                            const Icon(
+                              Icons.g_mobiledata,
+                              color: ThemeConfig.primary,
+                            ),
                       ),
                       label: const Text(
                         'Continue with Google',
                         style: TextStyle(
-                          color: Colors.black87,
+                          color: ThemeConfig.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -296,7 +287,7 @@ class RegisterView extends GetView<AuthController> {
                         child: const Text(
                           'Login',
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: ThemeConfig.primary,
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                           ),

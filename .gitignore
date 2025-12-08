@@ -47,3 +47,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 lib/core/constants/supabase_constants.dart
+
+lib/app/data/models/README.md
+lib/app/modules/account/README.md
+migrations
+
+docs/*.md
