@@ -1,10 +1,11 @@
+import 'package:resikan_app/app/config/theme_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:resikan_app/app/modules/account/views/account_view.dart';
 import 'package:resikan_app/app/modules/history/views/history_view.dart';
 import 'package:resikan_app/app/modules/home/views/home_view.dart';
 import 'package:resikan_app/app/modules/navigation/controllers/navigation_controller.dart';
-import 'package:resikan_app/app/modules/subscription/views/subscription_view.dart';
+import 'package:resikan_app/app/modules/service/views/service_view.dart';
 
 class NavigationView extends GetView<NavigationController> {
   const NavigationView({super.key});
@@ -13,7 +14,7 @@ class NavigationView extends GetView<NavigationController> {
   Widget build(BuildContext context) {
     final pages = [
       const HomeView(),
-      const SubscriptionView(),
+      const ServiceView(),
       const HistoryView(),
       const AccountView(),
     ];
@@ -29,7 +30,7 @@ class NavigationView extends GetView<NavigationController> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: ThemeConfig.primary.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, -5),
               ),
@@ -50,7 +51,7 @@ class NavigationView extends GetView<NavigationController> {
                   _buildNavItem(
                     icon: Icons.add_box,
                     index: 1,
-                    label: 'Catalog',
+                    label: 'Services',
                     isActive: controller.currentIndex.value == 1,
                   ),
                   _buildNavItem(
@@ -62,7 +63,7 @@ class NavigationView extends GetView<NavigationController> {
                   _buildNavItem(
                     icon: Icons.person,
                     index: 3,
-                    label: 'Profile',
+                    label: 'Account',
                     isActive: controller.currentIndex.value == 3,
                   ),
                 ],
@@ -85,7 +86,7 @@ class NavigationView extends GetView<NavigationController> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: isActive ? Colors.black : Colors.transparent,
+          color: isActive ? ThemeConfig.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
