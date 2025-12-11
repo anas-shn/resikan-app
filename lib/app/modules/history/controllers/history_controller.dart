@@ -88,12 +88,6 @@ class HistoryController extends GetxController {
           })
           .eq('id', booking.id);
 
-      Get.snackbar(
-        'Berhasil',
-        'Pesanan berhasil dibatalkan',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-
       // Reload bookings
       await loadBookings();
     } catch (e) {

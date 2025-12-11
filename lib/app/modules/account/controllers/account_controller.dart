@@ -42,8 +42,6 @@ class AccountController extends GetxController {
 
   @override
   void onClose() {
-    // Note: Don't dispose TextEditingControllers here
-    // GetX manages the controller lifecycle
     super.onClose();
   }
 
@@ -105,10 +103,6 @@ class AccountController extends GetxController {
             email?.split('@')[0] ??
             'User',
         'email': email,
-
-        //    metadata': userMetadata,
-        // 'created_at': DateTime.now().toIso8601String(),
-        // 'updated_at': DateTime.now().toIso8601String(),
       };
 
       final response = await _supabase.client
@@ -211,9 +205,6 @@ class AccountController extends GetxController {
 
   /// Navigate to edit profile page
   void goToEditProfile() {
-    print('🔍 DEBUG: goToEditProfile called');
-    print('🔍 DEBUG: Current route: ${Get.currentRoute}');
-    print('🔍 DEBUG: Navigating to: ${Routes.EDIT_PROFILE}');
     isEditing.value = true;
     Get.toNamed(Routes.EDIT_PROFILE);
   }

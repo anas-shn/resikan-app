@@ -95,6 +95,25 @@ class ServiceModel {
     return iconMap[iconPath] ?? Icons.cleaning_services;
   }
 
+  // Get image asset path
+  String? get imageAsset {
+    if (iconType == 'image' && iconPath != null) {
+      // If iconPath starts with 'images/', return as is
+      if (iconPath!.startsWith('images/')) {
+        return iconPath;
+      }
+      // Otherwise, prepend 'images/'
+      return 'images/$iconPath';
+    }
+    return null;
+  }
+
+  // Check if service has image
+  bool get hasImage => iconType == 'image' && iconPath != null;
+
+  // Check if service uses icon
+  bool get hasIcon => iconType == 'icon' || iconPath == null;
+
   String get formattedPrice {
     return 'Rp ${basePrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}';
   }

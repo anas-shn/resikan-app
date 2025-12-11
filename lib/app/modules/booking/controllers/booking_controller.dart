@@ -174,11 +174,7 @@ class BookingController extends GetxController {
 
         selectedDate.value = picked;
 
-        BookingErrorHandler.showInfo(
-          title: 'Tanggal Dipilih',
-          message: BookingValidation.formatDate(picked),
-          duration: const Duration(seconds: 2),
-        );
+        // Removed popup notification
       }
     } catch (e) {
       BookingErrorHandler.handleError(e, context: 'Memilih Tanggal');
@@ -368,11 +364,7 @@ class BookingController extends GetxController {
       };
     }
 
-    BookingErrorHandler.showSuccess(
-      title: 'Alamat Dipilih',
-      message: address.label,
-      duration: const Duration(seconds: 2),
-    );
+    // Removed popup notification
   }
 
   /// Clear selected address

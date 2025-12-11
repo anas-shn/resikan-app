@@ -13,8 +13,6 @@ import '../modules/booking/views/booking_view.dart';
 import '../modules/booking/views/create_booking_view.dart';
 import '../modules/history/bindings/history_binding.dart';
 import '../modules/history/views/history_view.dart';
-import '../modules/history_detail/bindings/history_detail_binding.dart';
-import '../modules/history_detail/views/history_detail_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/navigation/bindings/navigation_binding.dart';
@@ -95,11 +93,7 @@ class AppPages {
       page: () => const ServiceDetailView(),
       binding: ServiceBinding(),
     ),
-    GetPage(
-      name: _Paths.HISTORY_DETAIL,
-      page: () => const HistoryDetailView(),
-      binding: HistoryDetailBinding(),
-    ),
+
     GetPage(
       name: _Paths.ADDRESS_LIST,
       page: () => const AddressListView(),

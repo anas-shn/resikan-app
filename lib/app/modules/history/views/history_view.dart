@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:resikan_app/app/data/models/booking_model.dart';
 import 'package:resikan_app/app/routes/app_pages.dart';
 import '../controllers/history_controller.dart';
@@ -10,6 +11,8 @@ class HistoryView extends GetView<HistoryController> {
 
   @override
   Widget build(BuildContext context) {
+    // Initialize date formatting
+    initializeDateFormatting('id_ID', null);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Riwayat Pesanan'),
@@ -183,14 +186,8 @@ class HistoryView extends GetView<HistoryController> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () async {
-          final result = await Get.toNamed(
-            Routes.HISTORY_DETAIL,
-            arguments: booking,
-          );
-          // Refresh list if booking was updated/cancelled
-          if (result == true) {
-            controller.refreshBookings();
-          }
+          // Show detail in bottom sheet instead of new page
+          _showBookingDetail(booking, context);
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
@@ -414,5 +411,316 @@ class HistoryView extends GetView<HistoryController> {
         ],
       ),
     );
+  }
+
+  void _showBookingDetail(BookingModel booking, BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: EdgeInsets.only(top: 12, bottom: 8),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: _buildDetailContent(booking, context),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailContent(BookingModel booking, BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Status Header
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: _getStatusColor(booking.status),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                _getStatusIcon(booking.status),
+                size: 48,
+                color: Colors.white,
+              ),
+              SizedBox(height: 8),
+              Text(
+                controller.getStatusDisplayName(booking.status),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                booking.bookingNumber,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white.withOpacity(0.9),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        Padding(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Service Info
+              Text(
+                'Informasi Layanan',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 12),
+              _buildDetailRow(
+                'Layanan',
+                booking.extras?['service_name'] ?? '-',
+                Icons.cleaning_services,
+              ),
+              _buildDetailRow(
+                'Kategori',
+                booking.extras?['service_category'] ?? '-',
+                Icons.category,
+              ),
+              _buildDetailRow(
+                'Durasi',
+                '${booking.durationMinutes} menit',
+                Icons.timer,
+              ),
+
+              Divider(height: 32),
+
+              // Schedule Info
+              Text(
+                'Jadwal',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 12),
+              _buildDetailRow(
+                'Tanggal',
+                DateFormat(
+                  'EEEE, dd MMMM yyyy',
+                  'id_ID',
+                ).format(booking.scheduledAt),
+                Icons.calendar_today,
+              ),
+              _buildDetailRow(
+                'Waktu',
+                DateFormat('HH:mm').format(booking.scheduledAt) + ' WIB',
+                Icons.access_time,
+              ),
+
+              Divider(height: 32),
+
+              // Address Info
+              if (booking.address != null) ...[
+                Text(
+                  'Alamat',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 12),
+                _buildDetailRow('Lokasi', booking.address!, Icons.location_on),
+                if (booking.extras?['address_label'] != null)
+                  _buildDetailRow(
+                    'Label',
+                    booking.extras!['address_label'],
+                    Icons.label,
+                  ),
+                Divider(height: 32),
+              ],
+
+              // Notes
+              if (booking.extras?['notes'] != null &&
+                  booking.extras!['notes'].toString().isNotEmpty) ...[
+                Text(
+                  'Catatan',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 12),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    booking.extras!['notes'],
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+                SizedBox(height: 16),
+              ],
+
+              // Payment Info
+              Text(
+                'Pembayaran',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 12),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Total Biaya', style: TextStyle(fontSize: 16)),
+                    Text(
+                      NumberFormat.currency(
+                        symbol: 'Rp ',
+                        decimalDigits: 0,
+                      ).format(booking.totalPrice),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[700],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 24),
+
+              // Action Buttons
+              if (booking.isPending) ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Get.back();
+                      _showCancelConfirmation(booking, context);
+                    },
+                    icon: Icon(Icons.cancel),
+                    label: Text('Batalkan Pesanan'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+
+              SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () => Get.back(),
+                  child: Text('Tutup'),
+                  style: OutlinedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value, IconData icon) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: Colors.grey[600]),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'pending':
+        return Colors.orange[600]!;
+      case 'confirmed':
+        return Colors.blue[600]!;
+      case 'in_progress':
+        return Colors.purple[600]!;
+      case 'completed':
+        return Colors.green[600]!;
+      case 'cancelled':
+        return Colors.red[600]!;
+      default:
+        return Colors.grey[600]!;
+    }
+  }
+
+  IconData _getStatusIcon(String status) {
+    switch (status) {
+      case 'pending':
+        return Icons.schedule;
+      case 'confirmed':
+        return Icons.check_circle_outline;
+      case 'in_progress':
+        return Icons.pending_actions;
+      case 'completed':
+        return Icons.check_circle;
+      case 'cancelled':
+        return Icons.cancel;
+      default:
+        return Icons.info;
+    }
   }
 }
