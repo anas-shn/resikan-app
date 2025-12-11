@@ -129,11 +129,7 @@ class AccountView extends GetView<AccountController> {
             value: Obx(() => Text(controller.displayPhone)),
           ),
           const SizedBox(height: 16),
-          _buildInfoItem(
-            icon: Icons.location_on_outlined,
-            label: 'Address',
-            value: Obx(() => Text(controller.displayAddress)),
-          ),
+          _buildDefaultAddressItem(),
         ],
       ),
     );
@@ -195,6 +191,14 @@ class AccountView extends GetView<AccountController> {
       ),
       child: Column(
         children: [
+          _buildMenuItem(
+            icon: Icons.location_on,
+            title: 'My Addresses',
+            onTap: () {
+              Get.toNamed('/address/list');
+            },
+          ),
+          _buildDivider(),
           _buildMenuItem(
             icon: Icons.history,
             title: 'Booking History',
@@ -306,6 +310,69 @@ class AccountView extends GetView<AccountController> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDefaultAddressItem() {
+    return InkWell(
+      onTap: controller.navigateToAddressList,
+      borderRadius: BorderRadius.circular(10),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.location_on_outlined,
+              size: 20,
+              color: ThemeConfig.primary,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Default Address',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    ),
+                    const Spacer(),
+                    Icon(
+                      Icons.chevron_right,
+                      size: 16,
+                      color: Colors.grey[400],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Obx(
+                  () => Text(
+                    controller.defaultAddressDisplay,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: controller.hasDefaultAddress
+                          ? ThemeConfig.primary
+                          : Colors.grey,
+                      fontStyle: controller.hasDefaultAddress
+                          ? FontStyle.normal
+                          : FontStyle.italic,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

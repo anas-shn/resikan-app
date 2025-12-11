@@ -2,6 +2,9 @@ import 'package:get/get.dart';
 
 import '../modules/account/views/account_view.dart';
 import '../modules/account/views/edit_profile_view.dart';
+import '../modules/address/bindings/address_binding.dart';
+import '../modules/address/views/address_list_view.dart';
+import '../modules/address/views/address_form_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
 import '../modules/auth/views/register_view.dart';
@@ -10,6 +13,8 @@ import '../modules/booking/views/booking_view.dart';
 import '../modules/booking/views/create_booking_view.dart';
 import '../modules/history/bindings/history_binding.dart';
 import '../modules/history/views/history_view.dart';
+import '../modules/history_detail/bindings/history_detail_binding.dart';
+import '../modules/history_detail/views/history_detail_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/navigation/bindings/navigation_binding.dart';
@@ -89,6 +94,26 @@ class AppPages {
       name: _Paths.SERVICE_DETAIL,
       page: () => const ServiceDetailView(),
       binding: ServiceBinding(),
+    ),
+    GetPage(
+      name: _Paths.HISTORY_DETAIL,
+      page: () => const HistoryDetailView(),
+      binding: HistoryDetailBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADDRESS_LIST,
+      page: () => const AddressListView(),
+      binding: AddressBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADDRESS_ADD,
+      page: () => const AddressFormView(),
+      binding: AddressBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADDRESS_EDIT,
+      page: () => const AddressFormView(),
+      binding: AddressBinding(),
     ),
   ];
 }

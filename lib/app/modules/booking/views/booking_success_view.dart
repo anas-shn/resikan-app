@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:resikan_app/app/routes/app_pages.dart';
 
-class BookingSuccessView extends StatelessWidget {
+class BookingSuccessView extends StatefulWidget {
   final String bookingNumber;
   final String serviceName;
   final double totalPrice;
@@ -13,6 +13,37 @@ class BookingSuccessView extends StatelessWidget {
     required this.serviceName,
     required this.totalPrice,
   });
+
+  @override
+  State<BookingSuccessView> createState() => _BookingSuccessViewState();
+}
+
+class _BookingSuccessViewState extends State<BookingSuccessView>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    _scaleAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.elasticOut,
+    );
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,28 +58,31 @@ class BookingSuccessView extends StatelessWidget {
               const Spacer(),
 
               // Success Icon with Animation
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.green[400]!, Colors.green[600]!],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.green.withAlpha(80),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
+              ScaleTransition(
+                scale: _scaleAnimation,
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.green[400]!, Colors.green[600]!],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.check_rounded,
-                  size: 60,
-                  color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.green.withAlpha(80),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.check_rounded,
+                    size: 60,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               const SizedBox(height: 32),
@@ -82,13 +116,13 @@ class BookingSuccessView extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    _buildDetailRow('Nomor Pesanan', bookingNumber),
+                    _buildDetailRow('Nomor Pesanan', widget.bookingNumber),
                     const Divider(height: 24),
-                    _buildDetailRow('Layanan', serviceName),
+                    _buildDetailRow('Layanan', widget.serviceName),
                     const Divider(height: 24),
                     _buildDetailRow(
                       'Total Biaya',
-                      'Rp ${totalPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
+                      'Rp ${widget.totalPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
                       isHighlighted: true,
                     ),
                   ],

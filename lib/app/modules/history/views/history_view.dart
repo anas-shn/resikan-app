@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:resikan_app/app/data/models/booking_model.dart';
+import 'package:resikan_app/app/routes/app_pages.dart';
 import '../controllers/history_controller.dart';
 
 class HistoryView extends GetView<HistoryController> {
@@ -181,8 +182,15 @@ class HistoryView extends GetView<HistoryController> {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
-        onTap: () {
-          _showBookingDetailDialog(booking, context);
+        onTap: () async {
+          final result = await Get.toNamed(
+            Routes.HISTORY_DETAIL,
+            arguments: booking,
+          );
+          // Refresh list if booking was updated/cancelled
+          if (result == true) {
+            controller.refreshBookings();
+          }
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
@@ -381,91 +389,6 @@ class HistoryView extends GetView<HistoryController> {
               color: textColor,
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  void _showBookingDetailDialog(BookingModel booking, BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Detail Pesanan'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildDetailRow('Nomor Booking', booking.bookingNumber),
-              _buildDetailRow(
-                'Status',
-                controller.getStatusDisplayName(booking.status),
-              ),
-              if (booking.extras?['service_name'] != null)
-                _buildDetailRow('Layanan', booking.extras!['service_name']),
-              _buildDetailRow(
-                'Tanggal',
-                DateFormat('dd MMM yyyy').format(booking.scheduledAt),
-              ),
-              _buildDetailRow(
-                'Waktu',
-                DateFormat('HH:mm').format(booking.scheduledAt),
-              ),
-              if (booking.durationMinutes != null)
-                _buildDetailRow('Durasi', '${booking.durationMinutes} menit'),
-              if (booking.address != null)
-                _buildDetailRow('Alamat', booking.address!),
-              if (booking.extras?['notes'] != null &&
-                  booking.extras!['notes'].toString().isNotEmpty)
-                _buildDetailRow('Catatan', booking.extras!['notes']),
-              _buildDetailRow(
-                'Total Biaya',
-                NumberFormat.currency(
-                  symbol: 'Rp ',
-                  decimalDigits: 0,
-                ).format(booking.totalPrice),
-              ),
-              _buildDetailRow(
-                'Dibuat pada',
-                DateFormat('dd MMM yyyy HH:mm').format(booking.createdAt),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: Text('Tutup')),
-          if (booking.isPending)
-            TextButton(
-              onPressed: () {
-                Get.back();
-                _showCancelConfirmation(booking, context);
-              },
-              child: Text(
-                'Batalkan Pesanan',
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: 4),
-          Text(value, style: TextStyle(fontSize: 15, color: Colors.grey[900])),
         ],
       ),
     );

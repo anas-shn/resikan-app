@@ -9,7 +9,24 @@ class CreateBookingView extends GetView<BookingController> {
 
   @override
   Widget build(BuildContext context) {
-    final ServiceModel service = Get.arguments as ServiceModel;
+    // Safe argument handling
+    final ServiceModel? serviceArg = Get.arguments as ServiceModel?;
+
+    if (serviceArg == null) {
+      // If no service provided, go back
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.back();
+        Get.snackbar(
+          'Error',
+          'Service not found',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      });
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final ServiceModel service = serviceArg;
 
     return Scaffold(
       appBar: AppBar(title: Text('Pesan Layanan')),
@@ -271,36 +288,121 @@ class CreateBookingView extends GetView<BookingController> {
               ),
               SizedBox(height: 20),
 
-              // Address Input
+              // Address Selection
               Text(
                 'Alamat Layanan',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 12),
-              TextFormField(
-                controller: controller.addressController,
-                maxLines: 3,
-                decoration: InputDecoration(
-                  hintText: 'Masukkan alamat lengkap',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: Icon(Icons.location_on),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Alamat harus diisi';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 12),
 
-              // Location Picker (Optional)
+              // Address Selection Card
+              Obx(
+                () => InkWell(
+                  onTap: controller.selectAddressFromList,
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: controller.hasSelectedAddress
+                            ? Colors.blue[700]!
+                            : Colors.grey[300]!,
+                        width: controller.hasSelectedAddress ? 2 : 1,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      color: controller.hasSelectedAddress
+                          ? Colors.blue[50]
+                          : Colors.white,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          controller.hasSelectedAddress
+                              ? Icons.location_on
+                              : Icons.location_on_outlined,
+                          color: controller.hasSelectedAddress
+                              ? Colors.blue[700]
+                              : Colors.grey[600],
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                controller.hasSelectedAddress
+                                    ? controller.selectedAddress.value!.label
+                                    : 'Pilih Alamat',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: controller.hasSelectedAddress
+                                      ? Colors.blue[700]
+                                      : Colors.grey[600],
+                                ),
+                              ),
+                              if (controller.hasSelectedAddress) ...[
+                                SizedBox(height: 4),
+                                Text(
+                                  controller.selectedAddress.value!.fullAddress,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey[700],
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 12),
+              // Add New Address Button
+              if (!controller.hasAddresses) ...[
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange[50],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.orange[200]!),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        color: Colors.orange[700],
+                        size: 20,
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Belum ada alamat tersimpan',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.orange[700],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 12),
+              ],
+
               OutlinedButton.icon(
-                onPressed: controller.pickLocation,
-                icon: Icon(Icons.map),
-                label: Text('Pilih dari Peta'),
+                onPressed: () => Get.toNamed('/address/add'),
+                icon: Icon(Icons.add_location),
+                label: Text('Tambah Alamat Baru'),
                 style: OutlinedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                   shape: RoundedRectangleBorder(

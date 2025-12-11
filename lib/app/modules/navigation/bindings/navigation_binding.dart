@@ -4,10 +4,14 @@ import 'package:resikan_app/app/modules/account/controllers/account_controller.d
 import 'package:resikan_app/app/modules/history/controllers/history_controller.dart';
 import 'package:resikan_app/app/modules/home/controllers/home_controller.dart';
 import 'package:resikan_app/app/modules/navigation/controllers/navigation_controller.dart';
+import 'package:resikan_app/app/data/providers/addresses_provider.dart';
 
 class NavigationBinding extends Bindings {
   @override
   void dependencies() {
+    // Initialize AddressProvider as singleton
+    Get.lazyPut<AddressProvider>(() => AddressProvider(), fenix: true);
+
     Get.lazyPut<NavigationController>(() => NavigationController());
     Get.lazyPut<HomeController>(() => HomeController());
     Get.put<ServiceController>(ServiceController());

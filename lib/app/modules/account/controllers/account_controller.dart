@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/providers/supabase_provider.dart';
+import '../../../data/providers/addresses_provider.dart';
 import '../../../routes/app_pages.dart';
 
 class AccountController extends GetxController {
   final _supabase = SupabaseProvider.to;
+  AddressProvider? _addressProvider;
 
   // Observable state
   final Rx<UserModel?> user = Rx<UserModel?>(null);
@@ -24,7 +26,18 @@ class AccountController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _initAddressProvider();
     loadUserProfile();
+  }
+
+  /// Initialize AddressProvider
+  void _initAddressProvider() {
+    try {
+      _addressProvider = Get.find<AddressProvider>();
+    } catch (e) {
+      // AddressProvider not yet initialized, will be initialized by NavigationBinding
+      print('AddressProvider not yet available: $e');
+    }
   }
 
   @override
@@ -288,5 +301,24 @@ class AccountController extends GetxController {
       return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     }
     return name.isNotEmpty ? name[0].toUpperCase() : 'U';
+  }
+
+  // Address getters
+  AddressProvider? get addressProvider => _addressProvider;
+
+  bool get hasDefaultAddress {
+    if (_addressProvider == null) return false;
+    return _addressProvider!.hasDefaultAddress;
+  }
+
+  String get defaultAddressDisplay {
+    if (_addressProvider == null || !_addressProvider!.hasDefaultAddress) {
+      return 'Tap to add address';
+    }
+    return _addressProvider!.defaultAddress.value!.shortAddress;
+  }
+
+  void navigateToAddressList() {
+    Get.toNamed('/address/list');
   }
 }
