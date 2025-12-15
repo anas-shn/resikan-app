@@ -1,6 +1,10 @@
 import 'package:resikan_app/app/config/theme_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:resikan_app/app/widgets/service_icon_widget.dart';
+import 'package:resikan_app/app/widgets/article_card_widget.dart';
+import 'package:resikan_app/app/data/providers/article_provider.dart';
+import 'package:resikan_app/app/routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -8,6 +12,12 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    // Initialize ArticleProvider if not already
+    if (!Get.isRegistered<ArticleProvider>()) {
+      Get.put(ArticleProvider());
+    }
+    final articleProvider = Get.find<ArticleProvider>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -73,7 +83,7 @@ class HomeView extends GetView<HomeController> {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: ThemeConfig.primary,
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -129,18 +139,14 @@ class HomeView extends GetView<HomeController> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              width: 64,
-                              height: 64,
-                              decoration: BoxDecoration(
-                                color: ThemeConfig.primary.withAlpha(25),
-                                borderRadius: BorderRadius.circular(16),
+                            ServiceIconWidget(
+                              service: service,
+                              size: 64,
+                              color: ThemeConfig.primary,
+                              backgroundColor: ThemeConfig.primary.withAlpha(
+                                25,
                               ),
-                              child: Icon(
-                                service.flutterIcon,
-                                size: 32,
-                                color: ThemeConfig.primary,
-                              ),
+                              fit: BoxFit.contain,
                             ),
                             const SizedBox(height: 8),
                             Text(
@@ -156,6 +162,21 @@ class HomeView extends GetView<HomeController> {
                           ],
                         ),
                       );
+                    },
+                  );
+                }),
+                const SizedBox(height: 32),
+
+                // Articles Section
+                Obx(() {
+                  if (articleProvider.recentArticles.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return ArticlesSection(
+                    articles: articleProvider.recentArticles,
+                    onSeeAll: () {
+                      Get.toNamed(Routes.ARTICLE_LIST);
                     },
                   );
                 }),

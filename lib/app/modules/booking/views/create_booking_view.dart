@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:resikan_app/app/data/models/service_model.dart';
 import 'package:resikan_app/app/modules/booking/controllers/booking_controller.dart';
+import 'package:resikan_app/app/widgets/service_icon_widget.dart';
 
 class CreateBookingView extends GetView<BookingController> {
   const CreateBookingView({super.key});
@@ -46,14 +47,11 @@ class CreateBookingView extends GetView<BookingController> {
                 ),
                 child: Row(
                   children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(service.flutterIcon, color: Colors.blue[700]),
+                    ServiceIconCircular(
+                      service: service,
+                      size: 50,
+                      color: Colors.blue[700],
+                      backgroundColor: Colors.white,
                     ),
                     SizedBox(width: 16),
                     Expanded(

@@ -5,6 +5,9 @@ import '../modules/account/views/edit_profile_view.dart';
 import '../modules/address/bindings/address_binding.dart';
 import '../modules/address/views/address_list_view.dart';
 import '../modules/address/views/address_form_view.dart';
+import '../modules/article/bindings/article_binding.dart';
+import '../modules/article/views/article_list_view.dart';
+import '../modules/article/views/article_detail_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
 import '../modules/auth/views/register_view.dart';
@@ -108,6 +111,16 @@ class AppPages {
       name: _Paths.ADDRESS_EDIT,
       page: () => const AddressFormView(),
       binding: AddressBinding(),
+    ),
+    GetPage(
+      name: _Paths.ARTICLE_LIST,
+      page: () => const ArticleListView(),
+      binding: ArticleBinding(),
+    ),
+    GetPage(
+      name: _Paths.ARTICLE_DETAIL,
+      page: () => const ArticleDetailView(),
+      binding: ArticleBinding(),
     ),
   ];
 }

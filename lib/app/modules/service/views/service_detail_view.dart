@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:resikan_app/app/config/theme_config.dart';
 import 'package:resikan_app/app/data/models/service_model.dart';
 import 'package:resikan_app/app/routes/app_pages.dart';
 import '../controllers/service_controller.dart';
@@ -17,23 +18,29 @@ class ServiceDetailView extends GetView<ServiceController> {
         slivers: [
           // App Bar with back button
           SliverAppBar(
-            expandedHeight: 200,
+            expandedHeight: 250,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blue[700]!, Colors.blue[400]!],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Center(
-                  child: Icon(
-                    service.flutterIcon,
-                    size: 80,
-                    color: Colors.white,
-                  ),
+                decoration: BoxDecoration(color: Colors.blue),
+                child: Stack(
+                  children: [
+                    // Image positioned at bottom right
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(20),
+                        ),
+                        child: Image.asset(
+                          'images/people-clean.png',
+                          height: 250,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -63,7 +70,7 @@ class ServiceDetailView extends GetView<ServiceController> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue[700],
+                          color: ThemeConfig.primary,
                         ),
                       ),
                       SizedBox(width: 20),
@@ -154,7 +161,7 @@ class ServiceDetailView extends GetView<ServiceController> {
               Get.toNamed(Routes.CREATE_BOOKING, arguments: service);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue[700],
+              backgroundColor: ThemeConfig.primary,
               padding: EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
